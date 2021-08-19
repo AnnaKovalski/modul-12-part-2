@@ -12,51 +12,75 @@
  * http://newsapi.org/v2/everything?q=cat&language=en&pageSize=5&page=1
  */
 
-import articlesTpl from './templates/articles.hbs';
+// import articlesTpl from './templates/articles.hbs';
+var _ = require('lodash'); // lodash.debounce
 import './css/common.css';
-import NewsApiService from './js/news-service';
-import LoadMoreBtn from './js/components/load-more-btn';
+// import NewsApiService from './js/news-service';
+// import LoadMoreBtn from './js/components/load-more-btn';
+
+// const refs = {
+//   searchForm: document.querySelector('.js-search-form'),
+//   articlesContainer: document.querySelector('.js-articles-container'),
+// };
+// const loadMoreBtn = new LoadMoreBtn({
+//   selector: '[data-action="load-more"]',
+//   hidden: true,
+// });
+// const newsApiService = new NewsApiService();
+
+// refs.searchForm.addEventListener('submit', onSearch);
+// loadMoreBtn.refs.button.addEventListener('click', fetchArticles);
+
+// function onSearch(e) {
+//   e.preventDefault();
+
+//   newsApiService.query = e.currentTarget.elements.query.value;
+
+//   if (newsApiService.query === '') {
+//     return alert('Введи что-то нормальное');
+//   }
+
+//   loadMoreBtn.show();
+//   newsApiService.resetPage();
+//   clearArticlesContainer();
+//   fetchArticles();
+// }
+
+// function fetchArticles() {
+//   loadMoreBtn.disable();
+//   newsApiService.fetchArticles().then(articles => {
+//     appendArticlesMarkup(articles);
+//     loadMoreBtn.enable();
+//   });
+// }
+
+// function appendArticlesMarkup(articles) {
+//   refs.articlesContainer.insertAdjacentHTML('beforeend', articlesTpl(articles));
+// }
+
+// function clearArticlesContainer() {
+//   refs.articlesContainer.innerHTML = '';
+// }
+// ====================================INITIAL CODE ================================
+
+// Делаем референсы
 
 const refs = {
-  searchForm: document.querySelector('.js-search-form'),
-  articlesContainer: document.querySelector('.js-articles-container'),
+  searchInput: document.querySelector('#searchQuery'),
 };
-const loadMoreBtn = new LoadMoreBtn({
-  selector: '[data-action="load-more"]',
-  hidden: true,
-});
-const newsApiService = new NewsApiService();
 
-refs.searchForm.addEventListener('submit', onSearch);
-loadMoreBtn.refs.button.addEventListener('click', fetchArticles);
+// Вешаем обработчик событий на Input b и пишем в функицию в которой получаем доступ к инпут
+refs.searchInput.addEventListener('input', _.debounce(onImputSubmit, 500));
 
-function onSearch(e) {
-  e.preventDefault();
+function onImputSubmit(e) {
+  const inputName = e.currentTarget.value;
+  console.dir(inputName);
 
-  newsApiService.query = e.currentTarget.elements.query.value;
+  // Записываем ссылку в переменную
+  const url = `https://restcountries.eu/rest/v2/name/${inputName}`;
 
-  if (newsApiService.query === '') {
-    return alert('Введи что-то нормальное');
-  }
-
-  loadMoreBtn.show();
-  newsApiService.resetPage();
-  clearArticlesContainer();
-  fetchArticles();
-}
-
-function fetchArticles() {
-  loadMoreBtn.disable();
-  newsApiService.fetchArticles().then(articles => {
-    appendArticlesMarkup(articles);
-    loadMoreBtn.enable();
-  });
-}
-
-function appendArticlesMarkup(articles) {
-  refs.articlesContainer.insertAdjacentHTML('beforeend', articlesTpl(articles));
-}
-
-function clearArticlesContainer() {
-  refs.articlesContainer.innerHTML = '';
+  // Делаем запрос на сервер через fetch
+  fetch(url)
+    .then(r => r.json())
+    .then(console.log());
 }
